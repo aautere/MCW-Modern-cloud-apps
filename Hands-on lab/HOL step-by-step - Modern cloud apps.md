@@ -1761,6 +1761,8 @@ The advantages of using Logic Apps include the following:
 
 - Build off BizTalk server, API Management, Azure Functions, and Azure Service Bus with first-class integration support
 
+0. First create a que to storage account. Open storage account where the recipes are. Click **Overview**. Select **Queues**- Click **+ Queue** to create a queque, give name **receiptgenerator** and click **OK**.
+
 1. Next, we will create a Logic App that will trigger when an item is added to the **receiptgenerator** queue. In the Azure Management Portal, select the **+Create a resource** button, search for **Logic App**, select the returned Logic App result, and select **Create**.
 
     ![In the Azure Portal, under Marketplace, Everything is selected. Under Everything, Logic App is in the search field. Under Name, Logic App is circled.](images/Hands-onlabstep-by-step-Moderncloudappsimages/media/image236.png "Azure Portal")
