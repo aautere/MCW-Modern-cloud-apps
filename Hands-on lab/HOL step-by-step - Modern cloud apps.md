@@ -1309,13 +1309,18 @@ When you authenticate users by using OpenID Connect, Azure AD returns an ID toke
 2. Still in the **Controllers\\HomeController.cs** file, add the following method to the **HomeController** class:
 
     ```csharp
-    [Authorize]
-    public ActionResult Claims()
-    {
-        Claim displayName = ClaimsPrincipal.Current.FindFirst(ClaimsPrincipal.Current.Identities.First().NameClaimType);
-        ViewBag.DisplayName = displayName != null ? displayName.Value : string.Empty;
-        return View();
-    }
+        [Authorize]
+        public ActionResult Claims()
+        {
+            //Claim displayName = ClaimsPrincipal.Current.FindFirst(ClaimsPrincipal.Current.Identities.First().NameClaimType);
+            //ViewBag.DisplayName = displayName != null ? displayName.Value : string.Empty;
+
+            var displayName = User.Identity.Name;
+            ViewBag.DisplayName = displayName;
+            ViewBag.Claims = User.Claims;
+
+            return View();
+        }
     ```
 
 3. You can access any claim that your application receives in the same way. A list of all the claims the app receives is available for you on the **Claims** page. In Visual Studio on the Contoso.Apps.SportsLeague.Web object, right-click on **Views -\> Home,** select **Add -\> View** and name it **Claims.**  Select **OK**.
