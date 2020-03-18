@@ -1171,11 +1171,15 @@ To enable profile editing on your application, you will need to create a profile
 
 ### Task 5: Modify the Contoso.App.SportsLeague.Web
 
-1. Expand the **Contoso.Apps.SportsLeague.Web** project. Find the **Startup.cs** code file, locate the `public void Configure(` method declaration, then add the following line of code to this method:
+1. Expand the **Contoso.Apps.SportsLeague.Web** project. Find the **Startup.cs** code file, locate the `public void Configure(` method declaration, then add the following line of code to this method after app.UseAuthentication() :
 
     ```csharp
-    app.UseAuthorization();
+        app.UseAuthentication();
+
+        app.UseAuthorization();
     ```
+
+Notice the below image is 
 
     ![The Startup.cs file with the "app.UseAuthorization();" line of code highlighted.](media/2019-04-19-15-08-40.png "Startup.cs")
 
@@ -1187,7 +1191,7 @@ To enable profile editing on your application, you will need to create a profile
 
 4. Add the following settings in the **Application Settings** section:
 
-   - AzureADB2C:Instance - `https://login.microsoftonline.com/tfp/`.
+   - AzureADB2C:Instance - `https://[your Azure AD B2C name].b2clogin.com/tfp/`.
    - AzureADB2C:ClientId - **B2C Application ID you copied down earlier**.
    - AzureADB2C:CallbackPath - `/signin-oidc-b2c`.
    - AzureADB2C:Domain - **[your Azure AD B2C name].onmicrosoft.com**.
