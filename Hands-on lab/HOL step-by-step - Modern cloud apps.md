@@ -1216,10 +1216,10 @@ Your app is now properly configured to communicate with Azure AD B2C by using AS
 3. Add the following using statement to the top of the controller:
 
     ```csharp
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.Extensions.Configuration;
-    using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
     ```
 
 4. Locate the default controller **Index** method.
@@ -1229,54 +1229,68 @@ Your app is now properly configured to communicate with Azure AD B2C by using AS
     Replace the method with the following code, then **Save** the file.
 
     ```csharp
-    // Controllers\AccountController.cs
+        // Controllers\AccountController.cs
 
-    public static string SignUpSignInPolicyId;
-    public static string EditProfilePolicyId;
+        public readonly string _editProfilePolicyId;
 
-    public AccountController(IConfiguration configuration)
-    {
-        SignUpSignInPolicyId = configuration.GetValue<string>("AzureADB2C:SignUpSignInPolicyId");
-        EditProfilePolicyId = configuration.GetValue<string>("AzureADB2C:EditProfilePolicyId");
-    }
-
-    public async Task SignIn()
-    {
-        if (!User.Identity.IsAuthenticated)
+        public AccountController(IConfiguration configuration)
         {
-            // To execute a policy, you simply need to trigger an OWIN challenge.
-            // You can indicate which policy to use by specifying the policy id as the AuthenticationType
-            await HttpContext.ChallengeAsync(SignUpSignInPolicyId,
-                new AuthenticationProperties() { RedirectUri = "/" });
+            _editProfilePolicyId = configuration.GetValue<string>("AzureADB2C:EditProfilePolicyId");
         }
-    }
 
-    public async Task SignUp()
-    {
-        if (!User.Identity.IsAuthenticated)
+        public IActionResult SignIn()
         {
-            await HttpContext.ChallengeAsync(SignUpSignInPolicyId,
-                new AuthenticationProperties() { RedirectUri = "/" });
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Challenge(
+                    new AuthenticationProperties() { RedirectUri = "/" },
+                    AzureADB2CDefaults.AuthenticationScheme);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
-    }
 
-
-    public async Task Profile()
-    {
-        if (User.Identity.IsAuthenticated)
+        public IActionResult SignUp()
         {
-            await HttpContext.ChallengeAsync(EditProfilePolicyId,
-                new AuthenticationProperties() { RedirectUri = "/" });
-        }
-    }
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Challenge(
+                    new AuthenticationProperties() { RedirectUri = "/" },
+                    AzureADB2CDefaults.AuthenticationScheme);
+            }
 
-    public async Task SignOut()
-    {
-        if (User.Identity.IsAuthenticated)
-        {
-            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
-    }
+
+
+        public IActionResult Profile()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var properties = new AuthenticationProperties() { RedirectUri = "/" };
+                properties.Items[AzureADB2CDefaults.PolicyKey] = _editProfilePolicyId;
+                return Challenge(
+                    properties,
+                    AzureADB2CDefaults.AuthenticationScheme);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult SignOut()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            string redirectUri = Url.Action("Index", "Home", null, Request.Scheme);
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = redirectUri
+            };
+            return SignOut(properties, AzureADB2CDefaults.CookieScheme, AzureADB2CDefaults.OpenIdScheme);
+        }
 
     ```
 
