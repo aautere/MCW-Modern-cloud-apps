@@ -1039,7 +1039,7 @@ In this exercise, you will configure an Azure AD Business to Consumer (B2C) inst
 
    - Allow Implicit Flow: **Yes**
 
-   - Reply URL: `https://[your web url].azurewebsites.net` _(This should be the HTTPS URL to the Contoso E-Commerce Site.)_
+   - Reply URL: `https://[your web url].azurewebsites.net/signin-oidc-b2c` _(This should be the HTTPS URL to the Contoso E-Commerce Site with the path "/signin-oidc-b2c" which will be configured later to e-commerce site web app settings .)_
 
    ![The New application fields are set to the previously defined values.](images/Hands-onlabstep-by-step-Moderncloudappsimages/media/image161.png "New application")
 
